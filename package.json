@@ -1,0 +1,16 @@
+{
+  "name": "debug-drawer-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "pnpm --filter docs dev",
+    "build": "pnpm --filter debug-drawer build && pnpm --filter docs build",
+    "build:lib": "pnpm --filter msw-debug-drawer build",
+    "build:docs": "pnpm --filter docs build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2"
+  }
+}
