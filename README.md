@@ -1,6 +1,6 @@
 # msw-debug-drawer monorepo
 
-Monorepo with the `@withgu/debug-drawer` library and its documentation site.
+Monorepo with the `@withgus/debug-drawer` library and its documentation site.
 
 ## Packages
 
@@ -28,12 +28,12 @@ pnpm build:docs
 ## Library usage
 
 ```bash
-pnpm add @withgu/debug-drawer msw zustand vaul
+pnpm add @withgus/debug-drawer msw zustand vaul
 ```
 
 ```tsx
 // 1. Add the drawer to your app root
-import { DebugDrawer } from "@withgu/debug-drawer";
+import { DebugDrawer } from "@withgus/debug-drawer";
 import { worker } from "./mocks/browser";
 
 export default function App() {
@@ -46,7 +46,7 @@ export default function App() {
 }
 
 // 2. Register endpoints in each page
-import { useRegisterMockEndpoints } from "@withgu/debug-drawer";
+import { useRegisterMockEndpoints } from "@withgus/debug-drawer";
 
 export function TeamPage() {
   useRegisterMockEndpoints({

@@ -3,6 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "author": {
+    "name": "Gustavo S Souza",
+    "email": "kyoro_souza@hotmail.com",
+    "url": "https://github.com/Futhememe-official"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -15,7 +20,7 @@
     "msw": "^2.7.0",
     "zustand": "^5.0.0",
     "vaul": "^1.1.2",
-    "@msw-debug/drawer": "workspace:*"
+    "@withgus/debug": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
@@ -26,5 +31,6 @@
     "tailwindcss": "^3.4.17",
     "typescript": "~5.7.2",
     "vite": "^6.0.5"
-  }
+  },
+  "license": "MIT"
 }

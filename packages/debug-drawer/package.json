@@ -1,5 +1,5 @@
 {
-  "name": "@withgus/debug-drawer",
+  "name": "@withgus/debug",
   "version": "0.1.0",
   "description": "A debug drawer for switching MSW mock scenarios per page at runtime",
   "type": "module",
@@ -12,6 +12,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "author": {
+    "name": "Gustavo S Souza",
+    "email": "kyoro_souza@hotmail.com",
+    "url": "https://github.com/Futhememe-official"
   },
   "files": [
     "dist"
