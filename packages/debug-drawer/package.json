@@ -1,5 +1,5 @@
 {
-  "name": "@withgu/debug-drawer",
+  "name": "@withgus/debug-drawer",
   "version": "0.1.0",
   "description": "A debug drawer for switching MSW mock scenarios per page at runtime",
   "type": "module",
@@ -8,9 +8,9 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
       "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
   "files": [
