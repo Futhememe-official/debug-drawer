@@ -8,9 +8,13 @@
     "build:lib": "pnpm --filter debug-drawer build",
     "build:docs": "pnpm --filter docs build",
     "lint": "pnpm -r lint",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "changeset": "changeset",
+    "version-package": "changeset version",
+    "release": "pnpm run build && pnpm --filter debug-drawer release"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.30.0",
     "typescript": "~5.7.2"
   }
 }
