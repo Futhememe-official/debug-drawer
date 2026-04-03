@@ -24,7 +24,8 @@
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
     "typecheck": "tsc --noEmit",
-    "dev": "vite build --watch"
+    "dev": "vite build --watch",
+    "prepublishOnly": "pnpm build"
   },
   "peerDependencies": {
     "msw": ">=2.0.0",
