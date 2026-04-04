@@ -1,5 +1,14 @@
 # @withgus/debug
 
+## 1.2.0
+
+### Minor Changes
+
+- ##adjust re-render problem
+  - Adjust drawer endpoint block to adapt based on layout
+  - Adjust re-render problem on zustand and up performance
+  - Add new playground for tests
+
 ## 1.1.0
 
 ### Minor Changes
