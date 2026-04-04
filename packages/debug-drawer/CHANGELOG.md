@@ -1,5 +1,11 @@
 # @withgus/debug
 
+## 1.2.1
+
+### Patch Changes
+
+- Adjust button styles to start unset on styles css
+
 ## 1.2.0
 
 ### Minor Changes
