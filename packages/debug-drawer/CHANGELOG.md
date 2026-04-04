@@ -1,5 +1,11 @@
 # @withgus/debug
 
+## 1.2.2
+
+### Patch Changes
+
+- Fix to start drawer disabled for mock server
+
 ## 1.2.1
 
 ### Patch Changes
