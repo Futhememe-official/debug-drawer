@@ -18,7 +18,6 @@ const INSTALL = `pnpm add @withgus/debug msw zustand vaul`;
 const INIT_WORKER = `// src/mocks/browser.ts
 import { setupWorker } from 'msw/browser'
 
-// Add any base handlers here
 export const worker = setupWorker()`;
 
 const MAIN_SETUP = `// src/main.tsx
@@ -34,26 +33,19 @@ async function prepare() {
 
 prepare().then(() => {
   createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <App />
-    </StrictMode>
+    <StrictMode><App /></StrictMode>
   )
 })`;
 
 const APP_SETUP = `// src/App.tsx
-import { DebugDrawer } from '@withgus/debug'
+import { DebugDrawer } from '@msw-debug/drawer'
 import { worker } from './mocks/browser'
 import '@withgus/debug/css' //or inside your global.css file
 
 export default function App() {
   return (
     <>
-      {/* your app */}
-      <Router>
-        <Routes />
-      </Router>
-
-      {/* Add DebugDrawer — pass your worker instance */}
+      <Router><Routes /></Router>
       <DebugDrawer worker={worker} />
     </>
   )
@@ -120,70 +112,68 @@ import { useRegisterMockEndpoints } from '@withgus/debug'
 import { teamEndpoints, teamHandlers } from '../mocks/pages/team.mocks'
 
 export function TeamView() {
-  // Register this page's endpoints in the drawer
   useRegisterMockEndpoints({
     pageId: '/team',
     endpoints: teamEndpoints,
     handlers: teamHandlers,
   })
-
   // ... rest of your component
 }`;
 
 const THEMING = `/* Override CSS variables to match your design system */
 :root {
-  --mswd-accent:   #your-brand-color;
-  --mswd-surface:  #ffffff;
-  --mswd-bg:       #f9fafb;
-  --mswd-border:   #e5e7eb;
-  --mswd-tx:       #111827;
-  --mswd-muted:    #6b7280;
+  --mswd-accent:    #your-brand-color;
+  --mswd-surface:   #ffffff;
+  --mswd-bg:        #f9fafb;
+  --mswd-border:    #e5e7eb;
+  --mswd-tx:        #111827;
+  --mswd-muted:     #6b7280;
   --mswd-font-mono: 'Fira Code', monospace;
 }`;
 
 export function DocsPage() {
   const [active, setActive] = useState("overview");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   function scrollTo(id: string) {
     setActive(id);
+    setMobileNavOpen(false);
     document
       .getElementById(id)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   return (
-    <div id="docs" className="min-h-screen bg-canvas font-sans">
-      <div className="max-w-6xl mx-auto flex gap-0">
-        {/* ── Sidebar ── */}
-        <aside className="max-w-56 flex-shrink-0 sticky top-0 h-screen overflow-y-auto py-10 pl-6 pr-4 hidden md:block">
-          <div className="mb-6">
-            <p className="font-mono text-[9px] text-canvas-muted tracking-widest uppercase mb-3">
-              docs
-            </p>
-            <nav className="flex flex-col gap-0.5">
-              {NAV.map((n) => (
-                <button
-                  key={n.id}
-                  onClick={() => scrollTo(n.id)}
-                  className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                    active === n.id
-                      ? "bg-accent/10 text-accent font-medium"
-                      : "text-canvas-muted hover:text-canvas-tx hover:bg-canvas-surface"
-                  }`}
-                >
-                  {n.label}
-                </button>
-              ))}
-            </nav>
-          </div>
+    <div id="docs" className="min-h-screen bg-canvas font-sans w-full">
+      <div className="max-w-6xl mx-auto flex relative">
+        {/* ── Desktop sidebar ── */}
+        <aside className="w-52 flex-shrink-0 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto py-10 pl-6 pr-4 hidden md:block">
+          <p className="font-mono text-[9px] text-canvas-muted tracking-widest uppercase mb-3">
+            docs
+          </p>
+          <nav className="flex flex-col gap-0.5">
+            {NAV.map((n) => (
+              <button
+                key={n.id}
+                onClick={() => scrollTo(n.id)}
+                className={`text-left text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                  active === n.id
+                    ? "bg-accent/10 text-accent font-medium"
+                    : "text-canvas-muted hover:text-canvas-tx hover:bg-canvas-surface"
+                }`}
+              >
+                {n.label}
+              </button>
+            ))}
+          </nav>
         </aside>
 
         {/* ── Content ── */}
-        <main className="flex flex-col flex-1 max-w-3xl py-10 px-6 lg:px-10">
+        <main className="flex-1 min-w-0 py-8 sm:py-10 px-4 sm:px-6 lg:px-10">
           {/* Overview */}
           <section
             id="overview"
-            className="flex flex-col flex-wrap mb-16 scroll-mt-8"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
@@ -191,10 +181,10 @@ export function DocsPage() {
                 components
               </span>
             </div>
-            <h1 className="text-3xl font-bold text-canvas-tx tracking-tight mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-canvas-tx tracking-tight mb-4">
               Debug Drawer
             </h1>
-            <p className="text-canvas-muted leading-relaxed mb-6">
+            <p className="text-canvas-muted leading-relaxed mb-6 text-sm sm:text-base">
               A floating debug panel that integrates with{" "}
               <a
                 href="https://mswjs.io"
@@ -205,7 +195,7 @@ export function DocsPage() {
               to switch mock API scenarios per page at runtime — without
               restarting the dev server or touching handler files.
             </p>
-            <div className="md:grid md:grid-cols-3 flex flex-wrap flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 {
                   icon: "⚡",
@@ -244,7 +234,7 @@ export function DocsPage() {
           {/* Installation */}
           <section
             id="installation"
-            className="flex flex-col mb-16 scroll-mt-8"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
           >
             <SectionHeader step="1" title="Installation" />
             <p className="text-canvas-muted text-sm mb-4">
@@ -273,7 +263,10 @@ export function DocsPage() {
           <Divider />
 
           {/* Setup */}
-          <section id="setup" className="flex flex-col mb-16 scroll-mt-8">
+          <section
+            id="setup"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
+          >
             <SectionHeader step="2" title="Setup" />
             <p className="text-canvas-muted text-sm mb-6">
               Configure the worker and add the drawer to your app root.
@@ -298,7 +291,10 @@ export function DocsPage() {
           <Divider />
 
           {/* Usage */}
-          <section id="usage" className=" flex flex-col mb-16 scroll-mt-8">
+          <section
+            id="usage"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
+          >
             <SectionHeader step="3" title="Usage" />
             <p className="text-canvas-muted text-sm mb-6">
               Create a mock config file for each page, then register it with{" "}
@@ -322,7 +318,7 @@ export function DocsPage() {
             <CodeBlock code={PAGE_USAGE} filename="src/views/TeamView.tsx" />
 
             <div className="mt-4 p-4 rounded-xl bg-accent/5 border border-accent/15">
-              <p className="text-sm text-canvas-tx">
+              <p className="text-sm text-canvas-tx leading-relaxed">
                 <span className="font-semibold">How it works:</span> When the
                 component mounts,{" "}
                 <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded">
@@ -342,12 +338,14 @@ export function DocsPage() {
           <Divider />
 
           {/* Live demo */}
-          <section id="demo" className="flex flex-col mb-16 scroll-mt-8">
+          <section
+            id="demo"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
+          >
             <SectionHeader step="4" title="Live demo" />
             <p className="text-canvas-muted text-sm mb-6">
-              Click the orange button in the bottom-right corner to open the
-              drawer. Switch a scenario and click{" "}
-              <strong>Apply & reload</strong> to see it take effect.
+              Select a scenario in the drawer panel and watch the app output
+              react instantly.
             </p>
             <LiveDemo />
           </section>
@@ -355,7 +353,10 @@ export function DocsPage() {
           <Divider />
 
           {/* API */}
-          <section id="api" className="flex flex-col mb-16 scroll-mt-8">
+          <section
+            id="api"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
+          >
             <h2 className="text-xl font-bold text-canvas-tx mb-6">
               API reference
             </h2>
@@ -378,15 +379,15 @@ export function DocsPage() {
               />
               <PropRow
                 name="snapPoints"
-                type="(string | number)[]"
+                type="(string|number)[]"
                 def="['500px', 1]"
-                desc="Vaul snap points. E.g. ['400px', 1] = half-open then full. Pass [1] to always open full-height."
+                desc="Vaul snap points. Pass [1] to always open full-height."
               />
             </ApiSection>
 
             <ApiSection
               title="useRegisterMockEndpoints(config)"
-              desc="Hook that registers a page's endpoints in the drawer. Call it at the top of any view component."
+              desc="Hook that registers a page's endpoints in the drawer."
             >
               <PropRow
                 name="config.pageId"
@@ -398,11 +399,11 @@ export function DocsPage() {
                 name="config.endpoints"
                 type="EndpointConfig[]"
                 required
-                desc="Array of endpoint definitions (shown in the drawer UI)."
+                desc="Endpoint definitions shown in the drawer UI."
               />
               <PropRow
                 name="config.handlers"
-                type="Record<string, Record<string, ScenarioHandlerMap>>"
+                type="Record<…>"
                 required
                 desc="Handler factories keyed by endpointId → scenarioId."
               />
@@ -410,16 +411,16 @@ export function DocsPage() {
 
             <ApiSection
               title="useDebugDrawerStore"
-              desc="The raw Zustand store. Use this for advanced customization or reading state outside of the drawer."
+              desc="Raw Zustand store for advanced customization."
             >
               <PropRow
-                name="selectCurrentEndpoints(state)"
+                name="selectCurrentEndpoints"
                 type="EndpointConfig[]"
                 desc="Selector for current page's endpoints."
               />
               <PropRow
-                name="selectFabStatus(state)"
-                type="'ok' | 'warn' | 'error' | 'off'"
+                name="selectFabStatus"
+                type="'ok'|'warn'|'error'|'off'"
                 desc="Selector for the FAB badge status."
               />
             </ApiSection>
@@ -428,7 +429,10 @@ export function DocsPage() {
           <Divider />
 
           {/* Theming */}
-          <section id="theming" className="flex flex-col mb-16 scroll-mt-8">
+          <section
+            id="theming"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
+          >
             <h2 className="text-xl font-bold text-canvas-tx mb-2">Theming</h2>
             <p className="text-canvas-muted text-sm mb-6">
               Override CSS custom properties in your global stylesheet to match
@@ -454,7 +458,7 @@ function SectionHeader({ step, title }: { step: string; title: string }) {
       <span className="w-6 h-6 rounded-full bg-accent text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
         {step}
       </span>
-      <h2 className="text-xl font-bold text-canvas-tx">{title}</h2>
+      <h2 className="text-lg sm:text-xl font-bold text-canvas-tx">{title}</h2>
     </div>
   );
 }
@@ -469,13 +473,14 @@ function ApiSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col mb-8">
-      <h3 className="font-mono text-sm font-semibold text-canvas-tx mb-1">
+    <div className="mb-8">
+      <h3 className="font-mono text-sm font-semibold text-canvas-tx mb-1 break-all">
         {title}
       </h3>
       <p className="text-sm text-canvas-muted mb-3">{desc}</p>
       <div className="border border-canvas-border rounded-xl overflow-hidden">
-        <div className="md:grid md:grid-cols-[200px_160px_1fr] text-[10px] font-mono font-semibold text-canvas-muted uppercase tracking-widest bg-canvas-surface px-4 py-2.5 border-b border-canvas-border">
+        {/* Desktop header */}
+        <div className="hidden sm:grid sm:grid-cols-[140px_140px_1fr] text-[10px] font-mono font-semibold text-canvas-muted uppercase tracking-widest bg-canvas-surface px-4 py-2.5 border-b border-canvas-border">
           <span>Prop</span>
           <span>Type</span>
           <span>Description</span>
@@ -500,24 +505,49 @@ function PropRow({
   desc: string;
 }) {
   return (
-    <div className="grid md:grid-cols-[200px_160px_1fr] px-4 py-3 border-b border-canvas-border last:border-b-0 hover:bg-canvas-bg transition-colors">
-      <span className="font-mono text-[11px] text-canvas-tx flex items-center gap-1.5 flex-wrap break-words">
-        {name}
-        {required && (
-          <span className="text-[9px] text-accent font-bold">*</span>
-        )}
-      </span>
-      <span className="font-mono text-[11px] text-blue-600 self-center">
-        {type}
-      </span>
-      <span className="text-xs text-canvas-muted self-center leading-relaxed">
-        {desc}
-        {def && (
-          <span className="ml-1 font-mono text-[10px] bg-canvas-code px-1 py-0.5 rounded text-canvas-tx">
-            default: {def}
+    <div className="border-b border-canvas-border last:border-b-0 hover:bg-canvas-bg transition-colors">
+      {/* Desktop: 3-column grid */}
+      <div className="hidden sm:grid sm:grid-cols-[140px_140px_1fr] px-4 py-3">
+        <span className="font-mono text-[11px] text-canvas-tx flex items-center gap-1.5 self-center">
+          {name}
+          {required && (
+            <span className="text-[9px] text-accent font-bold">*</span>
+          )}
+        </span>
+        <span className="font-mono text-[11px] text-blue-600 self-center">
+          {type}
+        </span>
+        <span className="text-xs text-canvas-muted self-center leading-relaxed">
+          {desc}
+          {def && (
+            <span className="ml-1 font-mono text-[10px] bg-canvas-code px-1 py-0.5 rounded text-canvas-tx">
+              default: {def}
+            </span>
+          )}
+        </span>
+      </div>
+      {/* Mobile: stacked layout */}
+      <div className="sm:hidden px-4 py-3 space-y-1.5">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="font-mono text-[11px] font-semibold text-canvas-tx">
+            {name}
           </span>
-        )}
-      </span>
+          {required && (
+            <span className="text-[9px] text-accent font-bold">required</span>
+          )}
+          <span className="font-mono text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+            {type}
+          </span>
+        </div>
+        <p className="text-xs text-canvas-muted leading-relaxed">
+          {desc}
+          {def && (
+            <span className="ml-1 font-mono text-[10px] bg-canvas-code px-1 py-0.5 rounded text-canvas-tx">
+              default: {def}
+            </span>
+          )}
+        </p>
+      </div>
     </div>
   );
 }

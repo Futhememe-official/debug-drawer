@@ -2,10 +2,10 @@
 
 export function Navbar() {
   return (
-    <header className="sticky top-0 z-50 bg-hero/95 backdrop-blur border-b border-hero-border">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-hero/95 backdrop-blur border-b border-hero-border w-full">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2.5 group">
+        <a href="/" className="flex items-center gap-2 group flex-shrink-0">
           <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center text-white text-sm font-bold">
             D
           </div>
@@ -15,16 +15,16 @@ export function Navbar() {
         </a>
 
         {/* Nav links */}
-        <nav className="hidden sm:flex items-center gap-6">
+        <nav className="flex items-center gap-3 sm:gap-6">
           <a
             href="#docs"
-            className="text-sm text-hero-muted hover:text-hero-tx transition-colors"
+            className="text-sm text-hero-muted hover:text-hero-tx transition-colors hidden sm:block"
           >
             Docs
           </a>
           <a
             href="#api"
-            className="text-sm text-hero-muted hover:text-hero-tx transition-colors"
+            className="text-sm text-hero-muted hover:text-hero-tx transition-colors hidden sm:block"
           >
             API
           </a>
@@ -35,11 +35,11 @@ export function Navbar() {
             className="flex items-center gap-1.5 text-sm text-hero-muted hover:text-hero-tx transition-colors"
           >
             <GithubIcon />
-            GitHub
+            <span className="hidden sm:inline">GitHub</span>
           </a>
           <a
             href="#docs"
-            className="px-3 py-1.5 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity"
+            className="px-3 py-1.5 bg-accent text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity whitespace-nowrap"
           >
             Get started
           </a>

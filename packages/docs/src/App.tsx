@@ -5,7 +5,7 @@ import { DocsPage } from './pages/DocsPage'
 
 export default function App() {
   return (
-    <div className="font-sans bg-hero">
+    <div className="font-sans bg-hero w-full overflow-x-hidden">
       <Navbar />
       <Hero />
       <DocsPage />
