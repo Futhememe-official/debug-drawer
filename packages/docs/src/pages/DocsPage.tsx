@@ -43,6 +43,7 @@ prepare().then(() => {
 const APP_SETUP = `// src/App.tsx
 import { DebugDrawer } from '@withgus/debug'
 import { worker } from './mocks/browser'
+import '@withgus/debug/css' //or inside your global.css file
 
 export default function App() {
   return (
@@ -154,7 +155,7 @@ export function DocsPage() {
     <div id="docs" className="min-h-screen bg-canvas font-sans">
       <div className="max-w-6xl mx-auto flex gap-0">
         {/* ── Sidebar ── */}
-        <aside className="w-56 flex-shrink-0 sticky top-0 h-screen overflow-y-auto py-10 pl-6 pr-4 hidden md:block">
+        <aside className="max-w-56 flex-shrink-0 sticky top-0 h-screen overflow-y-auto py-10 pl-6 pr-4 hidden md:block">
           <div className="mb-6">
             <p className="font-mono text-[9px] text-canvas-muted tracking-widest uppercase mb-3">
               docs
@@ -178,9 +179,12 @@ export function DocsPage() {
         </aside>
 
         {/* ── Content ── */}
-        <main className="flex-1 max-w-3xl py-10 px-6 lg:px-10">
+        <main className="flex flex-col flex-1 max-w-3xl py-10 px-6 lg:px-10">
           {/* Overview */}
-          <section id="overview" className="mb-16 scroll-mt-8">
+          <section
+            id="overview"
+            className="flex flex-col flex-wrap mb-16 scroll-mt-8"
+          >
             <div className="flex items-center gap-2 mb-1">
               <span className="w-1.5 h-1.5 rounded-full bg-accent" />
               <span className="font-mono text-[10px] text-canvas-muted tracking-widest uppercase">
@@ -201,7 +205,7 @@ export function DocsPage() {
               to switch mock API scenarios per page at runtime — without
               restarting the dev server or touching handler files.
             </p>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="md:grid md:grid-cols-3 flex flex-wrap flex-col gap-3">
               {[
                 {
                   icon: "⚡",
@@ -238,7 +242,10 @@ export function DocsPage() {
           <Divider />
 
           {/* Installation */}
-          <section id="installation" className="mb-16 scroll-mt-8">
+          <section
+            id="installation"
+            className="flex flex-col mb-16 scroll-mt-8"
+          >
             <SectionHeader step="1" title="Installation" />
             <p className="text-canvas-muted text-sm mb-4">
               Install the package and its peer dependencies.{" "}
@@ -266,7 +273,7 @@ export function DocsPage() {
           <Divider />
 
           {/* Setup */}
-          <section id="setup" className="mb-16 scroll-mt-8">
+          <section id="setup" className="flex flex-col mb-16 scroll-mt-8">
             <SectionHeader step="2" title="Setup" />
             <p className="text-canvas-muted text-sm mb-6">
               Configure the worker and add the drawer to your app root.
@@ -291,7 +298,7 @@ export function DocsPage() {
           <Divider />
 
           {/* Usage */}
-          <section id="usage" className="mb-16 scroll-mt-8">
+          <section id="usage" className=" flex flex-col mb-16 scroll-mt-8">
             <SectionHeader step="3" title="Usage" />
             <p className="text-canvas-muted text-sm mb-6">
               Create a mock config file for each page, then register it with{" "}
@@ -335,7 +342,7 @@ export function DocsPage() {
           <Divider />
 
           {/* Live demo */}
-          <section id="demo" className="mb-16 scroll-mt-8">
+          <section id="demo" className="flex flex-col mb-16 scroll-mt-8">
             <SectionHeader step="4" title="Live demo" />
             <p className="text-canvas-muted text-sm mb-6">
               Click the orange button in the bottom-right corner to open the
@@ -348,7 +355,7 @@ export function DocsPage() {
           <Divider />
 
           {/* API */}
-          <section id="api" className="mb-16 scroll-mt-8">
+          <section id="api" className="flex flex-col mb-16 scroll-mt-8">
             <h2 className="text-xl font-bold text-canvas-tx mb-6">
               API reference
             </h2>
@@ -421,7 +428,7 @@ export function DocsPage() {
           <Divider />
 
           {/* Theming */}
-          <section id="theming" className="mb-16 scroll-mt-8">
+          <section id="theming" className="flex flex-col mb-16 scroll-mt-8">
             <h2 className="text-xl font-bold text-canvas-tx mb-2">Theming</h2>
             <p className="text-canvas-muted text-sm mb-6">
               Override CSS custom properties in your global stylesheet to match
@@ -462,13 +469,13 @@ function ApiSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mb-8">
+    <div className="flex flex-col mb-8">
       <h3 className="font-mono text-sm font-semibold text-canvas-tx mb-1">
         {title}
       </h3>
       <p className="text-sm text-canvas-muted mb-3">{desc}</p>
       <div className="border border-canvas-border rounded-xl overflow-hidden">
-        <div className="grid grid-cols-[200px_160px_1fr] text-[10px] font-mono font-semibold text-canvas-muted uppercase tracking-widest bg-canvas-surface px-4 py-2.5 border-b border-canvas-border">
+        <div className="md:grid md:grid-cols-[200px_160px_1fr] text-[10px] font-mono font-semibold text-canvas-muted uppercase tracking-widest bg-canvas-surface px-4 py-2.5 border-b border-canvas-border">
           <span>Prop</span>
           <span>Type</span>
           <span>Description</span>
@@ -493,7 +500,7 @@ function PropRow({
   desc: string;
 }) {
   return (
-    <div className="grid grid-cols-[200px_160px_1fr] px-4 py-3 border-b border-canvas-border last:border-b-0 hover:bg-canvas-bg transition-colors">
+    <div className="grid md:grid-cols-[200px_160px_1fr] px-4 py-3 border-b border-canvas-border last:border-b-0 hover:bg-canvas-bg transition-colors">
       <span className="font-mono text-[11px] text-canvas-tx flex items-center gap-1.5 flex-wrap break-words">
         {name}
         {required && (
