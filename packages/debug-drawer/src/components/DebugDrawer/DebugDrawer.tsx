@@ -1,5 +1,5 @@
 // src/components/DebugDrawer/DebugDrawer.tsx
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Drawer } from "vaul";
 import type { SetupWorker } from "msw/browser";
 import {
@@ -167,9 +167,15 @@ export function DebugDrawer({
   );
 
   // Push worker ref into store on first render
+  const workerRegistered = useRef(false);
   const setWorker = useDebugDrawerStore((s) => s._setWorker);
-  const storeWorker = useDebugDrawerStore((s) => s._worker);
-  if (!storeWorker) setWorker(worker);
+
+  useEffect(() => {
+    if (!workerRegistered.current) {
+      workerRegistered.current = true;
+      setWorker(worker);
+    }
+  }, [worker, setWorker]);
 
   const endpoints = useDebugDrawerStore(selectCurrentEndpoints);
   const expandedIds = useDebugDrawerStore((s) => s.expandedIds);
