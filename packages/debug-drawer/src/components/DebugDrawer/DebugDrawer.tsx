@@ -196,9 +196,6 @@ export function DebugDrawer({
 
   return (
     <>
-      {/* FAB — lives outside the drawer so it's always clickable */}
-      <DebugFab status={fabStatus} onClick={() => setOpen(true)} />
-
       {/* Vaul drawer */}
       <Drawer.Root
         open={open}
@@ -206,11 +203,12 @@ export function DebugDrawer({
         snapPoints={snapPoints}
         activeSnapPoint={activeSnap}
         setActiveSnapPoint={setActiveSnap}
-        // Prevent the page background from scaling (drawer-only UI, not full-screen app)
         shouldScaleBackground={false}
-        // Keep modal behaviour (focus trap, close on overlay click)
         modal
       >
+        <Drawer.Trigger asChild>
+          <DebugFab status={fabStatus} onClick={() => setOpen(true)} />
+        </Drawer.Trigger>
         <Drawer.Portal>
           {/* Vaul overlay — handles backdrop click to close */}
           <Drawer.Overlay className="mswd-vaul-overlay" />
@@ -224,9 +222,7 @@ export function DebugDrawer({
             <Drawer.Handle className="mswd-vaul-handle" />
 
             {/* Visually hidden title for screen readers */}
-            <Drawer.Title className="mswd-sr-only">
-              MSW Debug Drawer
-            </Drawer.Title>
+            <Drawer.Title className="mswd-sr-only">Debug Drawer</Drawer.Title>
 
             {/* ── Header ── */}
             <div className="mswd-header">
@@ -235,7 +231,7 @@ export function DebugDrawer({
                   ⚡
                 </div>
                 <div>
-                  <p className="mswd-header-title">MSW Debug</p>
+                  <p className="mswd-header-title">Debug</p>
                   {currentPageId ? (
                     <p className="mswd-header-sub mswd-header-sub--page">
                       {currentPageId}
