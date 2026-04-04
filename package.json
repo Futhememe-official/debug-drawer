@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "pnpm --filter docs dev",
+    "dev": "turbo dev",
     "build": "pnpm --filter debug-drawer build && pnpm --filter docs build",
     "build:lib": "pnpm --filter debug-drawer build",
     "build:docs": "pnpm --filter docs build",
@@ -15,6 +15,8 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
+    "turbo": "^2.9.3",
     "typescript": "~5.7.2"
-  }
+  },
+  "packageManager": "pnpm@10.0.0"
 }
