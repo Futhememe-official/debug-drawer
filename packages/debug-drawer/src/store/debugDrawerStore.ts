@@ -57,7 +57,7 @@ export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
   expandedIds: {},
   globalPreset: null,
   pendingChanges: false,
-  mockEnabled: true,
+  mockEnabled: false,
   _worker: null,
 
   _setWorker: (worker) => {
