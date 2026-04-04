@@ -1,5 +1,11 @@
 # docs
 
+## 0.1.0
+
+### Minor Changes
+
+- Implement mobile on docs
+
 ## 0.0.6
 
 ### Patch Changes
