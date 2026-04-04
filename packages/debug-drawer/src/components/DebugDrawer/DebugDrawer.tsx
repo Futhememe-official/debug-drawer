@@ -11,6 +11,7 @@ import {
 import { EndpointBlock } from "./EndpointBlock";
 import type { MockScenario } from "../../mocks/types";
 import "./drawer.css";
+import { useShallow } from "zustand/shallow";
 
 interface DebugDrawerProps {
   /** The MSW browser worker instance — pass the result of setupWorker() */
@@ -21,15 +22,9 @@ interface DebugDrawerProps {
    * to limit visibility to development.
    */
   enabled?: boolean;
-  /**
-   * Vaul snap points. Defaults to ['500px', 1] — half-open then full.
-   * Pass a single value like [1] to always open full-height.
-   */
-  snapPoints?: (string | number)[];
 }
 
 // ─── FAB ─────────────────────────────────────────────────────────────────
-
 function DebugFab({
   status,
   onClick,
@@ -155,35 +150,35 @@ function GlobalStrip({
 
 // ─── DebugDrawer ──────────────────────────────────────────────────────────
 
-export function DebugDrawer({
-  worker,
-  enabled = true,
-  snapPoints = ["500px", 1],
-}: DebugDrawerProps) {
+export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
   const [open, setOpen] = useState(false);
   const [applied, setApplied] = useState(false);
-  const [activeSnap, setActiveSnap] = useState<number | string | null>(
-    snapPoints[0],
-  );
 
-  // Push worker ref into store on first render
-  const workerRegistered = useRef(false);
   const setWorker = useDebugDrawerStore((s) => s._setWorker);
 
   useEffect(() => {
-    if (!workerRegistered.current) {
-      workerRegistered.current = true;
-      setWorker(worker);
-    }
-  }, [worker, setWorker]);
+    setWorker(worker);
+  }, [worker]);
 
-  const endpoints = useDebugDrawerStore(selectCurrentEndpoints);
-  const expandedIds = useDebugDrawerStore((s) => s.expandedIds);
-  const globalPreset = useDebugDrawerStore((s) => s.globalPreset);
-  const pendingChanges = useDebugDrawerStore((s) => s.pendingChanges);
-  const mockEnabled = useDebugDrawerStore((s) => s.mockEnabled);
-  const currentPageId = useDebugDrawerStore((s) => s.currentPageId);
-  const fabStatus = useDebugDrawerStore(selectFabStatus);
+  const {
+    endpoints,
+    expandedIds,
+    globalPreset,
+    pendingChanges,
+    mockEnabled,
+    currentPageId,
+    fabStatus,
+  } = useDebugDrawerStore(
+    useShallow((s) => ({
+      endpoints: selectCurrentEndpoints(s),
+      expandedIds: s.expandedIds,
+      globalPreset: s.globalPreset,
+      pendingChanges: s.pendingChanges,
+      mockEnabled: s.mockEnabled,
+      currentPageId: s.currentPageId,
+      fabStatus: selectFabStatus(s),
+    })),
+  );
 
   const toggleMockEnabled = useDebugDrawerStore((s) => s.toggleMockEnabled);
   const toggleEndpoint = useDebugDrawerStore((s) => s.toggleEndpoint);
@@ -206,9 +201,6 @@ export function DebugDrawer({
       <Drawer.Root
         open={open}
         onOpenChange={setOpen}
-        snapPoints={snapPoints}
-        activeSnapPoint={activeSnap}
-        setActiveSnapPoint={setActiveSnap}
         shouldScaleBackground={false}
         modal
       >
@@ -222,6 +214,7 @@ export function DebugDrawer({
           {/* Drawer content */}
           <Drawer.Content
             className="mswd-vaul-content"
+            aria-modal
             aria-describedby={undefined}
           >
             {/* Vaul's built-in accessible drag handle */}
@@ -297,11 +290,11 @@ export function DebugDrawer({
                   className={`mswd-list ${!mockEnabled ? "mswd-list--disabled" : ""}`}
                   data-vaul-no-drag
                 >
-                  {endpoints.map((ep) => (
+                  {endpoints.map((ep: any) => (
                     <EndpointBlock
                       key={ep.id}
                       endpoint={ep}
-                      expanded={expandedIds.has(ep.id)}
+                      expanded={!!expandedIds[ep.id]}
                       onToggle={() => toggleEndpoint(ep.id)}
                       onSelectScenario={(s: MockScenario) =>
                         selectScenario(ep.id, s)
