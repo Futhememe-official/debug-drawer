@@ -133,11 +133,9 @@ const THEMING = `/* Override CSS variables to match your design system */
 
 export function DocsPage() {
   const [active, setActive] = useState("overview");
-  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   function scrollTo(id: string) {
     setActive(id);
-    setMobileNavOpen(false);
     document
       .getElementById(id)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -480,7 +478,7 @@ function ApiSection({
       <p className="text-sm text-canvas-muted mb-3">{desc}</p>
       <div className="border border-canvas-border rounded-xl overflow-hidden">
         {/* Desktop header */}
-        <div className="hidden sm:grid sm:grid-cols-[140px_140px_1fr] text-[10px] font-mono font-semibold text-canvas-muted uppercase tracking-widest bg-canvas-surface px-4 py-2.5 border-b border-canvas-border">
+        <div className="hidden sm:grid sm:grid-cols-[200px_170px_1fr] text-[10px] font-mono font-semibold text-canvas-muted uppercase tracking-widest bg-canvas-surface px-4 py-2.5 border-b border-canvas-border">
           <span>Prop</span>
           <span>Type</span>
           <span>Description</span>
@@ -507,7 +505,7 @@ function PropRow({
   return (
     <div className="border-b border-canvas-border last:border-b-0 hover:bg-canvas-bg transition-colors">
       {/* Desktop: 3-column grid */}
-      <div className="hidden sm:grid sm:grid-cols-[140px_140px_1fr] px-4 py-3">
+      <div className="hidden sm:grid sm:grid-cols-[200px_170px_1fr] px-4 py-3">
         <span className="font-mono text-[11px] text-canvas-tx flex items-center gap-1.5 self-center">
           {name}
           {required && (
