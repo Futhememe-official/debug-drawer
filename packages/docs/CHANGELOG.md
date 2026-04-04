@@ -1,5 +1,11 @@
 # docs
 
+## 0.2.0
+
+### Minor Changes
+
+- Fix: adjust api table space
+
 ## 0.1.0
 
 ### Minor Changes
