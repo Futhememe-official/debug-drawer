@@ -11,6 +11,10 @@
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./css": {
+      "require": "./dist/debug.css",
+      "import": "./dist/debug.css"
     }
   },
   "author": {
