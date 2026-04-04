@@ -1,5 +1,5 @@
 // src/components/DebugDrawer/DebugDrawer.tsx
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Drawer } from "vaul";
 import type { SetupWorker } from "msw/browser";
 import {
