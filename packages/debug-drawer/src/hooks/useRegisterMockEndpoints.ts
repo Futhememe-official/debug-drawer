@@ -1,15 +1,22 @@
-// src/hooks/useRegisterMockEndpoints.ts
-import { useEffect } from 'react'
-import { PageMockConfig } from '../mocks/types'
-import { useDebugDrawerStore } from '../store/debugDrawerStore'
+import { useEffect, useRef } from "react";
+import { PageMockConfig } from "../mocks/types";
+import { useDebugDrawerStore } from "../store/debugDrawerStore";
 
 export function useRegisterMockEndpoints(config: PageMockConfig) {
-  const register   = useDebugDrawerStore(s => s.registerPage)
-  const setCurrent = useDebugDrawerStore(s => s.setCurrentPage)
+  const registerPage = useDebugDrawerStore((s) => s.registerPage);
+  const unregisterPage = useDebugDrawerStore((s) => s.unregisterPage);
+  const setCurrentPage = useDebugDrawerStore((s) => s.setCurrentPage);
+
+  const configRef = useRef(config);
+  configRef.current = config;
 
   useEffect(() => {
-    register(config)
-    setCurrent(config.pageId)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.pageId])
+    const { pageId } = configRef.current;
+    registerPage(configRef.current);
+    setCurrentPage(pageId);
+
+    return () => {
+      unregisterPage(pageId);
+    };
+  }, [registerPage, unregisterPage, setCurrentPage, config.pageId]);
 }

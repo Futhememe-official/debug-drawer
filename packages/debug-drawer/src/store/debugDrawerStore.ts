@@ -8,6 +8,8 @@ import {
   ScenarioHandlerMap,
 } from "../mocks/types";
 
+const EMPTY_ARRAY: any[] = [];
+
 export type GlobalPreset = "success" | "error" | "loading" | null;
 
 interface PageEntry {
@@ -18,7 +20,7 @@ interface PageEntry {
 interface DebugDrawerState {
   pages: Record<string, PageEntry>;
   currentPageId: string | null;
-  expandedIds: Set<string>;
+  expandedIds: Record<string, boolean>;
   globalPreset: GlobalPreset;
   pendingChanges: boolean;
   mockEnabled: boolean;
@@ -52,13 +54,16 @@ function flushPage(worker: SetupWorker, entry: PageEntry) {
 export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
   pages: {},
   currentPageId: null,
-  expandedIds: new Set(),
+  expandedIds: {},
   globalPreset: null,
   pendingChanges: false,
   mockEnabled: true,
   _worker: null,
 
-  _setWorker: (worker) => set({ _worker: worker }),
+  _setWorker: (worker) => {
+    if (get()._worker === worker) return; // evita re-render desnecessário
+    set({ _worker: worker });
+  },
 
   registerPage: (config) => {
     set((state) => {
@@ -90,21 +95,28 @@ export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
   setCurrentPage: (pageId) => {
     const { pages, mockEnabled, _worker } = get();
     const entry = pages[pageId];
+
+    const firstId = entry?.endpoints[0]?.id;
+
     set({
       currentPageId: pageId,
-      expandedIds: new Set(entry?.endpoints[0] ? [entry.endpoints[0].id] : []),
+      expandedIds: firstId ? { [firstId]: true } : {},
       globalPreset: null,
       pendingChanges: false,
     });
-    if (mockEnabled && entry && _worker) flushPage(_worker, entry);
+
+    if (mockEnabled && entry && _worker) {
+      flushPage(_worker, entry);
+    }
   },
 
   toggleEndpoint: (id) => {
-    set((state) => {
-      const next = new Set(state.expandedIds);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return { expandedIds: next };
-    });
+    set((state) => ({
+      expandedIds: {
+        ...state.expandedIds,
+        [id]: !state.expandedIds[id],
+      },
+    }));
   },
 
   selectScenario: (endpointId, scenario) => {
@@ -202,7 +214,9 @@ export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
 }));
 
 export const selectCurrentEndpoints = (s: DebugDrawerState) =>
-  s.currentPageId ? (s.pages[s.currentPageId]?.endpoints ?? []) : [];
+  s.currentPageId
+    ? (s.pages[s.currentPageId]?.endpoints ?? EMPTY_ARRAY)
+    : EMPTY_ARRAY;
 
 export const selectFabStatus = (
   s: DebugDrawerState,
