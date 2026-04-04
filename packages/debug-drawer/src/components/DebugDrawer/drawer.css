@@ -466,6 +466,8 @@
 }
 
 .mswd-ep-header {
+  all: unset;
+
   width: 100%;
   display: flex;
   align-items: center;
@@ -563,6 +565,7 @@
 }
 
 .mswd-option {
+  all: unset;
   width: 100%;
   display: flex;
   align-items: center;
