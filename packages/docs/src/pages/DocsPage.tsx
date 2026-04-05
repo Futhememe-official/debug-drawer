@@ -375,12 +375,6 @@ export function DocsPage() {
                 def="true"
                 desc="Set to false to completely hide the drawer."
               />
-              <PropRow
-                name="snapPoints"
-                type="(string|number)[]"
-                def="['500px', 1]"
-                desc="Vaul snap points. Pass [1] to always open full-height."
-              />
             </ApiSection>
 
             <ApiSection

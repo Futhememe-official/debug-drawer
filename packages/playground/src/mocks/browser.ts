@@ -1,5 +1,5 @@
-// src/mocks/browser.ts
-import { setupWorker } from 'msw/browser'
-import { handlers } from './handlers'
+import { setupWorker } from "msw/browser";
 
-export const worker = setupWorker(...handlers)
+// Worker inicia sem handlers — o DebugDrawer injeta os handlers dinamicamente
+// via useRegisterMockEndpoints conforme as páginas são montadas.
+export const worker = setupWorker();

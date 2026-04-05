@@ -61,7 +61,7 @@ export function Hero() {
         >
           <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
           <span className="font-mono text-[10px] sm:text-[11px] text-hero-muted tracking-wide">
-            v1.2.2 — open source
+            v1.2.3 — open source
           </span>
         </div>
 

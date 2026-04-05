@@ -1,136 +1,77 @@
-// src/mocks/handlers.ts
-import { http, HttpResponse, delay } from 'msw'
+/**
+ * MSW Handlers — NASA APOD
+ *
+ * Instale o MSW: npm install msw --save-dev
+ * Inicialize:    npx msw init public/ --save
+ *
+ * No main.tsx, descomente o bloco de inicialização do worker.
+ */
 
-const usersData = [
-  { id: 1, name: 'Gustavo Silva', role: 'developer' },
-  { id: 2, name: 'Ana Martins', role: 'designer' },
-  { id: 3, name: 'Rafael Costa', role: 'pm' },
-]
+import { http, HttpResponse } from "msw";
 
-// ─── Default handlers ─────────────────────────────────────────────────────
+const NASA_APOD_URL = "https://api.nasa.gov/planetary/apod";
 
 export const handlers = [
-  http.get('https://api.example.com/users', () =>
-    HttpResponse.json(usersData),
-  ),
+  http.get(NASA_APOD_URL, ({ request }: { request: Request }) => {
+    const url = new URL(request.url);
+    const date = url.searchParams.get("date") ?? "";
 
-  http.get('https://api.example.com/users/:id', ({ params }) => {
-    const user = usersData.find(u => u.id === Number(params.id))
-    if (!user) return HttpResponse.json({ message: 'User not found' }, { status: 404 })
-    return HttpResponse.json(user)
+    if (date.includes("__msw_error_400__"))
+      return HttpResponse.json(
+        { msg: "Bad Request: date must be between Jun 16, 1995 and today." },
+        { status: 400 }
+      );
+
+    if (date.includes("__msw_error_401__"))
+      return HttpResponse.json(
+        { error: { code: "API_KEY_INVALID", message: "An invalid api_key was supplied." } },
+        { status: 401 }
+      );
+
+    if (date.includes("__msw_error_403__"))
+      return HttpResponse.json(
+        { error: { code: "FORBIDDEN", message: "Access denied for this resource." } },
+        { status: 403 }
+      );
+
+    if (date.includes("__msw_error_404__"))
+      return HttpResponse.json(
+        { msg: "No data found for requested date." },
+        { status: 404 }
+      );
+
+    if (date.includes("__msw_error_429__"))
+      return HttpResponse.json(
+        { error: { code: "OVER_RATE_LIMIT", message: "Rate limit exceeded. Try again later." } },
+        { status: 429, headers: { "Retry-After": "3600" } }
+      );
+
+    if (date.includes("__msw_error_500__"))
+      return HttpResponse.json(
+        { msg: "Internal Server Error. Please try again later." },
+        { status: 500 }
+      );
+
+    if (date.includes("__msw_error_503__"))
+      return HttpResponse.json(
+        { msg: "Service temporarily unavailable." },
+        { status: 503 }
+      );
+
+    return undefined; // bypass — requisição real
   }),
+];
 
-  http.post('https://api.example.com/users', async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>
-    return HttpResponse.json({ id: Date.now(), ...body }, { status: 201 })
-  }),
-
-  http.delete('https://api.example.com/users/:id', () =>
-    HttpResponse.json({ message: 'User deleted', success: true }),
-  ),
-]
-
-// ─── Scenario overrides (used by DebugDrawer at runtime) ──────────────────
-
-export const scenarioHandlers = {
-  'GET /users': {
-    success: () =>
-      http.get('https://api.example.com/users', () => HttpResponse.json(usersData)),
-    not_found: () =>
-      http.get('https://api.example.com/users', () =>
-        HttpResponse.json({ message: 'Resource not found', code: 404 }, { status: 404 }),
-      ),
-    error: () =>
-      http.get('https://api.example.com/users', () =>
-        HttpResponse.json({ message: 'Internal server error', code: 500 }, { status: 500 }),
-      ),
-    loading: () =>
-      http.get('https://api.example.com/users', async () => {
-        await delay('infinite')
-        return HttpResponse.json([])
-      }),
-    network_error: () =>
-      http.get('https://api.example.com/users', () => HttpResponse.error()),
-    forbidden: () =>
-      http.get('https://api.example.com/users', () =>
-        HttpResponse.json({ message: 'Forbidden', code: 403 }, { status: 403 }),
-      ),
-  },
-
-  'GET /users/:id': {
-    success: () =>
-      http.get('https://api.example.com/users/:id', () => HttpResponse.json(usersData[0])),
-    not_found: () =>
-      http.get('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'User not found', code: 404 }, { status: 404 }),
-      ),
-    error: () =>
-      http.get('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'Internal server error' }, { status: 500 }),
-      ),
-    loading: () =>
-      http.get('https://api.example.com/users/:id', async () => {
-        await delay('infinite')
-        return HttpResponse.json({})
-      }),
-    forbidden: () =>
-      http.get('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'Forbidden', code: 403 }, { status: 403 }),
-      ),
-    network_error: () =>
-      http.get('https://api.example.com/users/:id', () => HttpResponse.error()),
-  },
-
-  'POST /users': {
-    success: () =>
-      http.post('https://api.example.com/users', async ({ request }) => {
-        const body = await request.json() as Record<string, unknown>
-        return HttpResponse.json({ id: Date.now(), ...body }, { status: 201 })
-      }),
-    error: () =>
-      http.post('https://api.example.com/users', () =>
-        HttpResponse.json({ message: 'Validation failed', fields: ['name', 'email'] }, { status: 400 }),
-      ),
-    not_found: () =>
-      http.post('https://api.example.com/users', () =>
-        HttpResponse.json({ message: 'Conflict: email already exists' }, { status: 409 }),
-      ),
-    loading: () =>
-      http.post('https://api.example.com/users', async () => {
-        await delay('infinite')
-        return HttpResponse.json({})
-      }),
-    forbidden: () =>
-      http.post('https://api.example.com/users', () =>
-        HttpResponse.json({ message: 'Forbidden', code: 403 }, { status: 403 }),
-      ),
-    network_error: () =>
-      http.post('https://api.example.com/users', () => HttpResponse.error()),
-  },
-
-  'DELETE /users/:id': {
-    success: () =>
-      http.delete('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'User deleted', success: true }),
-      ),
-    not_found: () =>
-      http.delete('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'User not found', code: 404 }, { status: 404 }),
-      ),
-    forbidden: () =>
-      http.delete('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'Cannot delete this user', code: 403 }, { status: 403 }),
-      ),
-    error: () =>
-      http.delete('https://api.example.com/users/:id', () =>
-        HttpResponse.json({ message: 'Internal server error' }, { status: 500 }),
-      ),
-    loading: () =>
-      http.delete('https://api.example.com/users/:id', async () => {
-        await delay('infinite')
-        return HttpResponse.json({})
-      }),
-    network_error: () =>
-      http.delete('https://api.example.com/users/:id', () => HttpResponse.error()),
-  },
-} as const
+// Handler de sucesso mockado (use no lugar dos reais em testes)
+export const successHandler = http.get(NASA_APOD_URL, () =>
+  HttpResponse.json({
+    date: new Date().toISOString().split("T")[0],
+    title: "Mocked: The Milky Way over the Sierra Nevada",
+    explanation: "Mock MSW response for development/testing purposes.",
+    url: "https://apod.nasa.gov/apod/image/2401/MilkyWay_Sierra_1024.jpg",
+    hdurl: "https://apod.nasa.gov/apod/image/2401/MilkyWay_Sierra.jpg",
+    media_type: "image",
+    service_version: "v1",
+    copyright: "MSW Mock",
+  })
+);

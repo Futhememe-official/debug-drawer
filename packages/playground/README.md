@@ -1,137 +1,73 @@
-# MSW Debug Drawer — React + Vite + TailwindCSS
+# React + TypeScript + Vite
 
-Debug drawer para alternar cenários de mock da API em tempo real com MSW, usando MVVM.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Estrutura
+Currently, two official plugins are available:
 
-```
-src/
-├── mocks/
-│   ├── handlers.ts          # handlers padrão + scenarioHandlers dinâmicos
-│   ├── browser.ts           # setupWorker (Service Worker, para dev)
-│   ├── server.ts            # setupServer (Node, para testes Vitest)
-│   ├── endpointsConfig.ts   # config visual dos endpoints no drawer
-│   └── types.ts
-├── components/
-│   └── DebugDrawer/
-│       ├── DebugDrawer.tsx  # FAB + backdrop + drawer + footer
-│       └── EndpointBlock.tsx # bloco expansível por endpoint
-├── hooks/
-│   ├── useDebugDrawerViewModel.ts  # ViewModel do drawer (MVVM)
-│   └── useTeamViewModel.ts         # ViewModel da tela de exemplo
-├── views/
-│   └── TeamView.tsx         # view que consome useTeamViewModel
-├── test/
-│   └── setup.ts             # setup global Vitest
-├── App.tsx
-├── main.tsx                 # inicia MSW worker antes do render
-└── index.css
-```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Setup
+## React Compiler
 
-```bash
-npm install
-```
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### Gerar o Service Worker do MSW
+## Expanding the ESLint configuration
 
-O MSW precisa do arquivo `mockServiceWorker.js` na pasta `public/`:
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-```bash
-npx msw init public/ --save
-```
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### Rodar em dev
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-```bash
-npm run dev
-```
-
-O `main.tsx` inicia o Service Worker do MSW antes de renderizar a árvore React. Em produção (`npm run build`), o worker não é iniciado e o `<DebugDrawer />` não renderiza.
-
-## Como usar o drawer
-
-1. Abre o browser em `http://localhost:5173`
-2. Clica no botão ⚡ no canto inferior direito
-3. Seleciona o cenário por endpoint, ou usa os botões globais
-4. Clica em **Apply & reload** — o MSW passa a interceptar com o novo handler
-5. Clica em **refetch** na tela para ver o resultado
-
-### Badge do FAB
-
-| Badge | Significa |
-|-------|-----------|
-| ✓ verde | Todos em success |
-| … amarelo | Algum em loading |
-| ! vermelho | Algum em error / not_found |
-
-## Testes
-
-```bash
-npm test
-```
-
-O Vitest usa `jsdom` + `@testing-library/react`. O `src/test/setup.ts` configura:
-
-```ts
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
-```
-
-### Override por teste
-
-```ts
-server.use(
-  http.get('https://api.example.com/users', () =>
-    HttpResponse.json({ message: 'Server error' }, { status: 500 }),
-  ),
-)
-```
-
-## Adicionar novo endpoint
-
-**1. `handlers.ts`** — handler padrão + cenários:
-
-```ts
-export const handlers = [
-  http.get('https://api.example.com/products', () =>
-    HttpResponse.json([...]),
-  ),
-]
-
-export const scenarioHandlers = {
-  'GET /products': {
-    success: () => http.get('...', () => HttpResponse.json([...])),
-    error:   () => http.get('...', () => HttpResponse.json({}, { status: 500 })),
-    loading: () => http.get('...', async () => { await delay('infinite'); return HttpResponse.json([]) }),
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
   },
-}
+])
 ```
 
-**2. `endpointsConfig.ts`** — config visual:
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```ts
-{
-  id: 'GET /products',
-  method: 'GET',
-  path: '/products',
-  selectedScenario: 'success',
-  options: [
-    { id: 'success', label: 'Success', description: 'Returns products', statusCode: 200, scenario: 'success' },
-    { id: 'error',   label: 'Server error', description: '500',         statusCode: 500, scenario: 'error'   },
-  ],
-}
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-## Stack
-
-| Pacote | Versão | Uso |
-|--------|--------|-----|
-| vite | ^6 | bundler + dev server |
-| react | ^19 | UI |
-| tailwindcss | ^3 | estilização |
-| msw | ^2.7 | interceptação de rede |
-| vitest | ^2 | testes |
-| @testing-library/react | ^16 | testes de componente |
