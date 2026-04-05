@@ -4,10 +4,11 @@ Monorepo with the `@withgus/debug-drawer` library and its documentation site.
 
 ## Packages
 
-| Package                                                | Description                                  |
-| ------------------------------------------------------ | -------------------------------------------- |
-| [`packages/debug-drawer`](./packages/msw-debug-drawer) | The publishable library                      |
-| [`packages/docs`](./packages/docs)                     | Documentation site (Vite + React + Tailwind) |
+| Package                                            | Description                                          |
+| -------------------------------------------------- | ---------------------------------------------------- |
+| [`packages/debug-drawer`](./packages/debug-drawer) | The publishable library                              |
+| [`packages/docs`](./packages/docs)                 | Documentation site (Vite + React + Tailwind)         |
+| [`packages/playground`](./packages/playground)     | Playground site (Vite + React + Tailwind + NASA API) |
 
 ## Getting started
 
