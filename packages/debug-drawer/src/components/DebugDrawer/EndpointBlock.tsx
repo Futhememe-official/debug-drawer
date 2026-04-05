@@ -75,7 +75,7 @@ export function EndpointBlock({
           {endpoint.options.map((opt, i) => {
             const selected = endpoint.selectedScenario === opt.scenario;
             return (
-              <div key={opt.id}>
+              <div className="mswd-option-wrapper" key={opt.id}>
                 {i > 0 && <div className="mswd-option-divider" />}
                 <button
                   className={`mswd-option ${selected ? "mswd-option--selected" : ""}`}

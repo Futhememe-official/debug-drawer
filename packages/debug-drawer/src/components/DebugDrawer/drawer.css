@@ -461,10 +461,11 @@
 /* ── Endpoint block ──────────────────────────────────────────────────────── */
 
 .mswd-ep-block {
+  display: flex;
+  flex-direction: column;
   background: var(--mswd-surface);
   border: 1px solid var(--mswd-border);
   border-radius: 12px;
-  /* overflow: hidden; */
 }
 .mswd-ep-block:hover {
   border-color: var(--mswd-border2);
@@ -473,8 +474,8 @@
 .mswd-ep-header {
   all: unset;
 
-  width: 96.9%;
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 8px;
   padding: 10px 14px;
@@ -571,11 +572,16 @@
   background: var(--mswd-border);
 }
 
+.mswd-option-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .mswd-option {
   all: unset;
 
-  width: 96.8%;
   display: flex;
+  flex: 1;
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
