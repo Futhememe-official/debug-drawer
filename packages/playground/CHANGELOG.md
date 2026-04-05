@@ -1,5 +1,12 @@
 # playground
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @withgus/debug@1.2.4
+
 ## 0.0.1
 
 ### Patch Changes

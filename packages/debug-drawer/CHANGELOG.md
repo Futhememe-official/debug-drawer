@@ -1,5 +1,11 @@
 # @withgus/debug
 
+## 1.2.4
+
+### Patch Changes
+
+- Fix: Adjust css to be responsive on all devices
+
 ## 1.2.3
 
 ### Patch Changes
