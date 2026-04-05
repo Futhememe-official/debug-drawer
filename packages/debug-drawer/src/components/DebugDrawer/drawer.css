@@ -54,6 +54,7 @@
   font-family: var(--mswd-font-sans);
   /* Vaul's slide animation runs on transform, so don't override it */
   will-change: transform;
+  overflow: hidden;
 }
 
 /* Vaul's built-in handle — we just restyle it to match our design */
@@ -405,6 +406,9 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--mswd-muted) var(--mswd-bg); /* thumb color | track color */
 }
 .mswd-list--disabled {
   opacity: 0.4;
@@ -460,6 +464,7 @@
   background: var(--mswd-surface);
   border: 1px solid var(--mswd-border);
   border-radius: 12px;
+  /* overflow: hidden; */
 }
 .mswd-ep-block:hover {
   border-color: var(--mswd-border2);
@@ -468,7 +473,7 @@
 .mswd-ep-header {
   all: unset;
 
-  width: 100%;
+  width: 96.9%;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -477,6 +482,8 @@
   cursor: pointer;
   text-align: left;
   transition: background 0.12s;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 .mswd-ep-header:hover {
   background: var(--mswd-surface2);
@@ -566,7 +573,8 @@
 
 .mswd-option {
   all: unset;
-  width: 100%;
+
+  width: 96.8%;
   display: flex;
   align-items: center;
   gap: 10px;

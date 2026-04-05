@@ -14,7 +14,8 @@
     },
     "./css": {
       "require": "./dist/debug.css",
-      "import": "./dist/debug.css"
+      "import": "./dist/debug.css",
+      "default": "./dist/debug.css"
     }
   },
   "author": {
@@ -28,7 +29,7 @@
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --declaration --outDir dist",
     "typecheck": "tsc --noEmit",
-    "dev": "vite build --watch",
+    "dev": "tsc --emitDeclarationOnly --declaration --outDir dist && vite build --watch",
     "release": "pnpm build && changeset publish"
   },
   "peerDependencies": {
