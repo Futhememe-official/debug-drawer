@@ -116,7 +116,7 @@ export function Hero() {
               </TerminalLine>
               <TerminalLine delay={1200}>
                 <span className="font-mono text-xs text-hero-muted whitespace-nowrap">
-                  Packages: +4 added (msw, zustand, vaul, @msw-debug/drawer)
+                  Packages: +4 added (msw, zustand, vaul, @withgus/debug)
                 </span>
               </TerminalLine>
               <TerminalLine delay={1600}>
