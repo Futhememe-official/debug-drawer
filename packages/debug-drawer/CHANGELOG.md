@@ -1,5 +1,11 @@
 # @withgus/debug
 
+## 1.2.3
+
+### Patch Changes
+
+- Fix: adjust css imports and button spacing
+
 ## 1.2.2
 
 ### Patch Changes
