@@ -227,7 +227,7 @@ export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
             <div className="mswd-header">
               <div className="mswd-header-left">
                 <div className="mswd-header-icon" aria-hidden="true">
-                  ⚡
+                  ⚙️
                 </div>
                 <div>
                   <p className="mswd-header-title">Debug</p>

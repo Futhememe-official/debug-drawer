@@ -1,4 +1,4 @@
-# msw-debug-drawer monorepo
+# Debug Drawer Monorepo
 
 Monorepo with the `@withgus/debug` library and its documentation site.
 
