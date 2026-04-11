@@ -1,5 +1,13 @@
 # docs
 
+## 0.3.2
+
+### Patch Changes
+
+- update documentation to npm registry
+- Updated dependencies
+  - @withgus/debug@1.2.5
+
 ## 0.3.1
 
 ### Patch Changes
