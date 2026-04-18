@@ -1,5 +1,11 @@
 # docs
 
+## 0.4.1
+
+### Patch Changes
+
+- Feat: add llm.txt
+
 ## 0.4.0
 
 ### Minor Changes
