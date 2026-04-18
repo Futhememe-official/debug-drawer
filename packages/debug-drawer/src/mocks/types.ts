@@ -36,4 +36,9 @@ export interface PageMockConfig {
   pageId: string;
   endpoints: EndpointConfig[];
   handlers: Record<string, ScenarioHandlerMap>;
+  /**
+   * Callback function invoked when the drawer applies changes (i.e., when the "Apply & reload" button is clicked).
+   * @returns void
+   */
+  onApplyChanges?: (endpoints?: EndpointConfig[]) => void;
 }
