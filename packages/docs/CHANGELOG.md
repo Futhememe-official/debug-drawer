@@ -1,5 +1,11 @@
 # docs
 
+## 0.4.0
+
+### Minor Changes
+
+- Feat: update SEO and meta tags
+
 ## 0.3.3
 
 ### Patch Changes
