@@ -1,0 +1,182 @@
+# llm.txt
+
+## Overview
+
+This project provides a runtime debugging interface for frontend applications, implemented as a React-based debug drawer that integrates with Mock Service Worker (MSW).
+
+It enables developers to dynamically switch API mocking scenarios during execution, without modifying application code or triggering rebuilds.
+
+---
+
+## Core Concept
+
+The system introduces a UI overlay ("debug drawer") that allows runtime control over network behavior by interfacing with MSW handlers.
+
+```text
+User Interaction (Debug Drawer UI)
+        ↓
+Scenario Selection / Configuration
+        ↓
+MSW Handler Override (Runtime)
+        ↓
+Intercepted Network Requests
+        ↓
+Mocked Responses Returned to App
+```
+
+---
+
+## Core Capabilities
+
+### Runtime Scenario Switching
+
+* Change API response scenarios without code changes
+* Instantly simulate different backend states (success, error, edge cases)
+
+### MSW Integration
+
+* Uses Mock Service Worker to intercept network requests
+* Overrides or swaps handlers dynamically at runtime
+* Maintains compatibility with existing MSW setups
+
+### Debug Drawer UI
+
+* Embedded React component
+* Accessible during development (and optionally staging)
+* Non-intrusive overlay for quick access
+
+### Zero Rebuild Workflow
+
+* No need to:
+
+  * edit mock files
+  * restart dev server
+  * redeploy
+* Changes apply immediately in the running app
+
+---
+
+## Intended Use Cases
+
+* Frontend development without backend dependency
+* QA and manual testing of edge cases
+* Product demos with controlled data states
+* Debugging inconsistent API behaviors
+* Rapid prototyping of UI states
+
+---
+
+## Design Principles
+
+### Runtime First
+
+All changes happen during application execution, not build time.
+
+### Developer Efficiency
+
+Reduce iteration time when testing different backend scenarios.
+
+### Decoupling
+
+Frontend behavior can be tested independently of backend availability.
+
+### Transparency
+
+Developers can clearly see and control which scenario is active.
+
+---
+
+## Architecture
+
+### Components
+
+* Debug Drawer (React)
+
+  * UI for selecting scenarios
+  * Displays current mock state
+
+* Scenario Registry
+
+  * Defines available mock configurations
+  * Maps scenarios to MSW handlers
+
+* MSW Runtime Layer
+
+  * Intercepts requests
+  * Applies selected scenario logic
+
+---
+
+## Scenario Model
+
+A scenario represents a predefined set of API behaviors.
+
+Example:
+
+```json
+{
+  "name": "user-error",
+  "handlers": [
+    {
+      "endpoint": "/api/user",
+      "method": "GET",
+      "response": {
+        "status": 500,
+        "body": { "error": "Internal Server Error" }
+      }
+    }
+  ]
+}
+```
+
+---
+
+## Behavior
+
+* Default scenario is loaded on app start
+* Switching scenarios updates MSW handlers immediately
+* Requests made after switching reflect new behavior
+* Existing in-flight requests are not affected
+
+---
+
+## Limitations
+
+* Only affects requests intercepted by MSW
+* Requires MSW to be properly configured in the app
+* Not intended for production environments (unless explicitly enabled)
+* State is typically ephemeral (resets on reload unless persisted)
+
+---
+
+## Best Practices
+
+* Define clear and meaningful scenario names
+* Cover edge cases (timeouts, errors, empty states)
+* Keep scenarios isolated and composable
+* Avoid overly complex handler logic
+
+---
+
+## Security Considerations
+
+* Ensure debug drawer is disabled or protected in production
+* Avoid exposing sensitive mock data
+* Gate access via environment flags or authentication if needed
+
+---
+
+## Example Workflow
+
+1. Start application in development mode
+2. Open debug drawer
+3. Select a scenario (e.g., "empty list", "server error")
+4. Interact with the UI
+5. Observe behavior changes instantly
+6. Iterate as needed
+
+---
+
+## Keywords
+
+React, MSW, Mock Service Worker, frontend debugging, runtime mocks, testing, developer tools, scenario switching
