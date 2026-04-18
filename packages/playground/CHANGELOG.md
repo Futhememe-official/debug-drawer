@@ -1,5 +1,16 @@
 # playground
 
+## 0.1.0
+
+### Minor Changes
+
+- Feat: create a function callback when the user apply changes
+
+### Patch Changes
+
+- Updated dependencies
+  - @withgus/debug@1.3.0
+
 ## 0.0.3
 
 ### Patch Changes

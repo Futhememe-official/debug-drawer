@@ -1,5 +1,12 @@
 # docs
 
+## 0.3.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @withgus/debug@1.3.0
+
 ## 0.3.2
 
 ### Patch Changes

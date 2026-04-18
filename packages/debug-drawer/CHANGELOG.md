@@ -1,5 +1,11 @@
 # @withgus/debug
 
+## 1.3.0
+
+### Minor Changes
+
+- Feat: create a function callback when the user apply changes
+
 ## 1.2.5
 
 ### Patch Changes
