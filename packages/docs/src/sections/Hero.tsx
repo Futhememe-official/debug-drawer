@@ -84,7 +84,7 @@ export function Hero() {
         </h1>
 
         {/* Subtitle */}
-        <p
+        <h2
           className="text-base sm:text-lg text-hero-muted max-w-xl mx-auto leading-relaxed mb-8 sm:mb-10 animate-fade-up px-2"
           style={{ animationDelay: "160ms" }}
         >
@@ -92,7 +92,7 @@ export function Hero() {
           <span className="text-hero-tx font-medium">MSW</span> and{" "}
           <span className="text-hero-tx font-medium">Zustand</span> to switch
           mock scenarios without touching code or restarting the dev server.
-        </p>
+        </h2>
 
         {/* Terminal + CTAs */}
         <div className="animate-fade-up" style={{ animationDelay: "240ms" }}>
