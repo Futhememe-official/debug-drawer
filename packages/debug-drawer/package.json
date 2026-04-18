@@ -1,6 +1,6 @@
 {
   "name": "@withgus/debug",
-  "version": "1.2.5",
+  "version": "1.3.0",
   "description": "A debug drawer for switching MSW mock scenarios per page at runtime",
   "type": "module",
   "main": "./dist/index.cjs",

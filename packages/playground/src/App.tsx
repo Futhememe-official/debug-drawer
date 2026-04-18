@@ -20,7 +20,15 @@ export default function App() {
   const [worker, setWorker] = useState<SetupWorker | null>(null);
 
   // Registra os endpoints da página no store do DebugDrawer
-  useRegisterMockEndpoints(apodPageConfig);
+  useRegisterMockEndpoints({
+    ...apodPageConfig,
+    onApplyChanges: (endpoints: never) => {
+      console.log("Endpoint selecionado:  ", endpoints);
+      alert(
+        "Cenário aplicado! Você pode adicionar um callback personalizado para executar ações adicionais após aplicar as mudanças.",
+      );
+    },
+  });
 
   // Carrega o worker lazy em DEV
   useEffect(() => {
@@ -81,8 +89,8 @@ export default function App() {
           </div>
 
           <p className="text-slate-400 text-sm leading-relaxed max-w-lg">
-            Explore imagens e vídeos astronômicos da NASA. Selecione uma data
-            ou use o{" "}
+            Explore imagens e vídeos astronômicos da NASA. Selecione uma data ou
+            use o{" "}
             <span className="text-[#FF5623] font-mono text-xs">
               Debug Drawer
             </span>{" "}
@@ -146,9 +154,7 @@ export default function App() {
       </div>
 
       {/* Debug Drawer — só renderiza em DEV e quando o worker estiver pronto */}
-      {worker && (
-        <DebugDrawer worker={worker} enabled={import.meta.env.DEV} />
-      )}
+      {worker && <DebugDrawer worker={worker} enabled={import.meta.env.DEV} />}
     </div>
   );
 }

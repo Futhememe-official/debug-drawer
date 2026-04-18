@@ -41,6 +41,8 @@ interface DebugDrawerState {
   applyChanges: () => void;
   resetCurrentPage: () => void;
   toggleMockEnabled: () => Promise<void>;
+  onApplyChangesCallback?: (endpoints?: EndpointConfig[]) => void;
+  registerOnApplyChangesCallback?: (cb: () => void) => void;
 }
 
 function flushPage(worker: SetupWorker, entry: PageEntry) {
@@ -59,6 +61,7 @@ export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
   pendingChanges: false,
   mockEnabled: false,
   _worker: null,
+  onApplyChangesCallback: undefined,
 
   _setWorker: (worker) => {
     if (get()._worker === worker) return; // evita re-render desnecessário
@@ -173,6 +176,14 @@ export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
     const entry = pages[currentPageId];
     if (entry) flushPage(_worker, entry);
     set({ pendingChanges: false });
+    if (get().onApplyChangesCallback) {
+      const selectedPage = pages?.[currentPageId]?.endpoints;
+      get().onApplyChangesCallback?.(selectedPage);
+    }
+  },
+
+  registerOnApplyChangesCallback: (cb) => {
+    set({ onApplyChangesCallback: cb });
   },
 
   resetCurrentPage: () => {
