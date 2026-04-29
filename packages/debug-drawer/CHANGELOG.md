@@ -1,5 +1,11 @@
 # @withgus/debug
 
+## 1.4.0
+
+### Minor Changes
+
+- Feat: new fn to toggle only the selected endpoint
+
 ## 1.3.0
 
 ### Minor Changes

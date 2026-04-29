@@ -1,5 +1,16 @@
 # docs
 
+## 0.5.0
+
+### Minor Changes
+
+- Feat: new fn to toggle only the selected endpoint
+
+### Patch Changes
+
+- Updated dependencies
+  - @withgus/debug@1.4.0
+
 ## 0.4.1
 
 ### Patch Changes
