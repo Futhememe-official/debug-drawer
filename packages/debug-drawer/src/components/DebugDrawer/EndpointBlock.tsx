@@ -41,6 +41,7 @@ interface Props {
   expanded: boolean;
   onToggle: () => void;
   onSelectScenario: (s: MockScenario) => void;
+  onToggleEndpointMock: () => void;
 }
 
 export function EndpointBlock({
@@ -48,27 +49,42 @@ export function EndpointBlock({
   expanded,
   onToggle,
   onSelectScenario,
+  onToggleEndpointMock,
 }: Props) {
+  const epMockEnabled = endpoint.mockEnabled !== false;
   const sel =
     endpoint.options.find((o) => o.scenario === endpoint.selectedScenario) ??
     endpoint.options[0];
   return (
-    <div className="mswd-ep-block">
-      <button className="mswd-ep-header" onClick={onToggle}>
-        <span className={`mswd-method mswd-method--${endpoint.method}`}>
-          {endpoint.method}
-        </span>
-        <span className="mswd-ep-path">{endpoint.path}</span>
-        <span className={statusClass(endpoint.selectedScenario)}>
-          {sel?.statusCode ??
-            (endpoint.selectedScenario === "loading" ? "…" : "ERR")}
-        </span>
-        <span
-          className={`mswd-chevron ${expanded ? "mswd-chevron--open" : "mswd-chevron--closed"}`}
+    <div className={`mswd-ep-block ${!epMockEnabled ? "mswd-ep-block--disabled" : ""}`}>
+      <div className="mswd-ep-header-row">
+        <button className="mswd-ep-header" onClick={onToggle}>
+          <span className={`mswd-method mswd-method--${endpoint.method}`}>
+            {endpoint.method}
+          </span>
+          <span className="mswd-ep-path">{endpoint.path}</span>
+          <span className={statusClass(endpoint.selectedScenario)}>
+            {sel?.statusCode ??
+              (endpoint.selectedScenario === "loading" ? "…" : "ERR")}
+          </span>
+          <span
+            className={`mswd-chevron ${expanded ? "mswd-chevron--open" : "mswd-chevron--closed"}`}
+          >
+            ›
+          </span>
+        </button>
+        <button
+          type="button"
+          className="mswd-ep-mock-toggle"
+          title={epMockEnabled ? "Desativar mock deste endpoint" : "Ativar mock deste endpoint"}
+          aria-label={epMockEnabled ? "Desativar mock deste endpoint" : "Ativar mock deste endpoint"}
+          onClick={(e) => { e.stopPropagation(); onToggleEndpointMock(); }}
         >
-          ›
-        </span>
-      </button>
+          <div className={`mswd-ep-track ${epMockEnabled ? "mswd-ep-track--on" : ""}`}>
+            <div className={`mswd-ep-thumb ${epMockEnabled ? "mswd-ep-thumb--on" : ""}`} />
+          </div>
+        </button>
+      </div>
 
       {expanded && (
         <div className="mswd-options">
