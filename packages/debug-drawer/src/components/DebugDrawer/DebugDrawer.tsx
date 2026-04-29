@@ -10,6 +10,7 @@ import {
 } from "../../store/debugDrawerStore";
 import { EndpointBlock } from "./EndpointBlock";
 import type { MockScenario } from "../../mocks/types";
+// @ts-ignore
 import "./drawer.css";
 import { useShallow } from "zustand/shallow";
 
@@ -183,6 +184,7 @@ export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
   const toggleMockEnabled = useDebugDrawerStore((s) => s.toggleMockEnabled);
   const toggleEndpoint = useDebugDrawerStore((s) => s.toggleEndpoint);
   const selectScenario = useDebugDrawerStore((s) => s.selectScenario);
+  const toggleEndpointMock = useDebugDrawerStore((s) => s.toggleEndpointMock);
   const applyGlobalPreset = useDebugDrawerStore((s) => s.applyGlobalPreset);
   const applyChanges = useDebugDrawerStore((s) => s.applyChanges);
   const resetCurrentPage = useDebugDrawerStore((s) => s.resetCurrentPage);
@@ -299,6 +301,7 @@ export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
                       onSelectScenario={(s: MockScenario) =>
                         selectScenario(ep.id, s)
                       }
+                      onToggleEndpointMock={() => toggleEndpointMock(ep.id)}
                     />
                   ))}
                 </div>

@@ -470,6 +470,14 @@
 .mswd-ep-block:hover {
   border-color: var(--mswd-border2);
 }
+.mswd-ep-block--disabled {
+  opacity: 0.5;
+}
+
+.mswd-ep-header-row {
+  display: flex;
+  align-items: center;
+}
 
 .mswd-ep-header {
   all: unset;
@@ -484,10 +492,53 @@
   text-align: left;
   transition: background 0.12s;
   border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
+  border-bottom-left-radius: 12px;
 }
 .mswd-ep-header:hover {
   background: var(--mswd-surface2);
+}
+
+/* ── Per-endpoint mock toggle ─────────────────────────────────────────────── */
+
+.mswd-ep-mock-toggle {
+  all: unset;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mswd-ep-track {
+  position: relative;
+  width: 28px;
+  height: 16px;
+  border-radius: 8px;
+  background: var(--mswd-surface3);
+  border: 1px solid var(--mswd-border2);
+  flex-shrink: 0;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+.mswd-ep-track--on {
+  background: var(--mswd-accent);
+  border-color: var(--mswd-accent);
+}
+
+.mswd-ep-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: left 0.18s;
+}
+.mswd-ep-thumb--on {
+  left: 14px;
 }
 
 .mswd-method {

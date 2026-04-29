@@ -37,6 +37,7 @@ interface DebugDrawerState {
   // endpoint controls
   toggleEndpoint: (id: string) => void;
   selectScenario: (endpointId: string, scenario: MockScenario) => void;
+  toggleEndpointMock: (endpointId: string) => void;
   applyGlobalPreset: (preset: GlobalPreset) => void;
   applyChanges: () => void;
   resetCurrentPage: () => void;
@@ -48,6 +49,7 @@ interface DebugDrawerState {
 function flushPage(worker: SetupWorker, entry: PageEntry) {
   worker.resetHandlers();
   entry.endpoints.forEach((ep) => {
+    if (ep.mockEnabled === false) return;
     const fn = entry.handlers[ep.id]?.[ep.selectedScenario];
     if (fn) worker.use(fn());
   });
@@ -139,6 +141,29 @@ export const useDebugDrawerStore = create<DebugDrawerState>((set, get) => ({
           },
         },
         globalPreset: null,
+        pendingChanges: true,
+      };
+    });
+  },
+
+  toggleEndpointMock: (endpointId) => {
+    const { currentPageId } = get();
+    if (!currentPageId) return;
+    set((state) => {
+      const entry = state.pages[currentPageId];
+      if (!entry) return {};
+      return {
+        pages: {
+          ...state.pages,
+          [currentPageId]: {
+            ...entry,
+            endpoints: entry.endpoints.map((ep) =>
+              ep.id === endpointId
+                ? { ...ep, mockEnabled: ep.mockEnabled === false ? true : false }
+                : ep,
+            ),
+          },
+        },
         pendingChanges: true,
       };
     });

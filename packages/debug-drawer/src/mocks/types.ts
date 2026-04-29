@@ -27,6 +27,7 @@ export interface EndpointConfig {
   path: string;
   selectedScenario: MockScenario;
   options: MockOption[];
+  mockEnabled?: boolean;
 }
 
 export type ScenarioHandlerMap = Record<string, () => HttpHandler>;
