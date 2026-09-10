@@ -10,6 +10,8 @@ export type {
   EndpointConfig,
   ScenarioHandlerMap,
   PageMockConfig,
+  DebugDrawerWorkerConfig,
+  MswStartOptions,
 } from "./mocks/types";
 
 export type { GlobalPreset } from "./store/debugDrawerStore";

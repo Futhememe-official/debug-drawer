@@ -9,7 +9,10 @@ import {
   type GlobalPreset,
 } from "../../store/debugDrawerStore";
 import { EndpointBlock } from "./EndpointBlock";
-import type { MockScenario } from "../../mocks/types";
+import type {
+  MockScenario,
+  DebugDrawerWorkerConfig,
+} from "../../mocks/types";
 // @ts-ignore
 import "./drawer.css";
 import { useShallow } from "zustand/shallow";
@@ -23,6 +26,13 @@ interface DebugDrawerProps {
    * to limit visibility to development.
    */
   enabled?: boolean;
+  /**
+   * Controls how the drawer registers / starts the MSW Service Worker.
+   * Use it for micro-frontends (`externallyStarted` / `serviceWorkerUrl`) and
+   * for runtimes where Service Workers are blocked (iOS WKWebView): the drawer
+   * detects the failure, disables mocking and leaves the host app running.
+   */
+  workerConfig?: DebugDrawerWorkerConfig;
 }
 
 // ─── FAB ─────────────────────────────────────────────────────────────────
@@ -79,29 +89,43 @@ function DebugFab({
 
 function MockToggleRow({
   enabled,
+  unsupported,
   onToggle,
 }: {
   enabled: boolean;
+  unsupported?: boolean;
   onToggle: () => void;
 }) {
+  const on = enabled && !unsupported;
+  const title = unsupported
+    ? "Mock indisponível"
+    : enabled
+      ? "Mock ativo"
+      : "Mock inativo";
+  const sub = unsupported
+    ? "Service Worker bloqueado neste ambiente — usando API real"
+    : enabled
+      ? "interceptando requisições"
+      : "requisições indo para a API real";
+
   return (
-    <button onClick={onToggle} className="mswd-toggle-row" type="button">
-      <div className={`mswd-track ${enabled ? "mswd-track--on" : ""}`}>
-        <div className={`mswd-thumb ${enabled ? "mswd-thumb--on" : ""}`} />
+    <button
+      onClick={onToggle}
+      className="mswd-toggle-row"
+      type="button"
+      disabled={unsupported}
+      style={unsupported ? { opacity: 0.55, cursor: "not-allowed" } : undefined}
+    >
+      <div className={`mswd-track ${on ? "mswd-track--on" : ""}`}>
+        <div className={`mswd-thumb ${on ? "mswd-thumb--on" : ""}`} />
       </div>
       <div className="mswd-toggle-labels">
-        <p
-          className={`mswd-toggle-title ${enabled ? "mswd-toggle-title--on" : ""}`}
-        >
-          {enabled ? "Mock ativo" : "Mock inativo"}
+        <p className={`mswd-toggle-title ${on ? "mswd-toggle-title--on" : ""}`}>
+          {title}
         </p>
-        <p className="mswd-toggle-sub">
-          {enabled
-            ? "interceptando requisições"
-            : "requisições indo para a API real"}
-        </p>
+        <p className="mswd-toggle-sub">{sub}</p>
       </div>
-      <span className={`mswd-dot ${enabled ? "mswd-dot--on" : ""}`} />
+      <span className={`mswd-dot ${on ? "mswd-dot--on" : ""}`} />
     </button>
   );
 }
@@ -151,15 +175,24 @@ function GlobalStrip({
 
 // ─── DebugDrawer ──────────────────────────────────────────────────────────
 
-export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
+export function DebugDrawer({
+  worker,
+  enabled = true,
+  workerConfig,
+}: DebugDrawerProps) {
   const [open, setOpen] = useState(false);
   const [applied, setApplied] = useState(false);
 
   const setWorker = useDebugDrawerStore((s) => s._setWorker);
+  const setStartConfig = useDebugDrawerStore((s) => s._setStartConfig);
 
   useEffect(() => {
     setWorker(worker);
   }, [worker]);
+
+  useEffect(() => {
+    setStartConfig(workerConfig ?? {});
+  }, [workerConfig]);
 
   const {
     endpoints,
@@ -167,6 +200,7 @@ export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
     globalPreset,
     pendingChanges,
     mockEnabled,
+    swUnsupported,
     currentPageId,
     fabStatus,
   } = useDebugDrawerStore(
@@ -176,6 +210,7 @@ export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
       globalPreset: s.globalPreset,
       pendingChanges: s.pendingChanges,
       mockEnabled: s.mockEnabled,
+      swUnsupported: s.swUnsupported,
       currentPageId: s.currentPageId,
       fabStatus: selectFabStatus(s),
     })),
@@ -250,7 +285,11 @@ export function DebugDrawer({ worker, enabled = true }: DebugDrawerProps) {
               </Drawer.Close>
             </div>
 
-            <MockToggleRow enabled={mockEnabled} onToggle={toggleMockEnabled} />
+            <MockToggleRow
+              enabled={mockEnabled}
+              unsupported={swUnsupported}
+              onToggle={toggleMockEnabled}
+            />
 
             {/* ── Empty state ── */}
             {endpoints.length === 0 ? (
