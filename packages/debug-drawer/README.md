@@ -230,3 +230,64 @@ Override CSS custom properties in your global stylesheet to match your design sy
   --mswd-font-mono: "Fira Code", monospace;
 }
 ```
+
+---
+
+## 6. Micro-frontends & iOS WebView
+
+The MSW Service Worker script must be **served by the host document** (same origin, and
+ideally at the root so its scope covers `/`). A micro-frontend bundle cannot drop a file
+at the host root, and some runtimes — notably **iOS `WKWebView` / React Native WebView** —
+block Service Worker registration entirely.
+
+`<DebugDrawer />` accepts a `workerConfig` prop for these cases. If the worker cannot
+start, the drawer disables mocking, shows _"Mock indisponível"_ and lets the host app keep
+running against the real API — it never throws.
+
+```tsx
+<DebugDrawer
+  worker={worker}
+  workerConfig={{
+    // Point at wherever the host actually serves the script.
+    serviceWorkerUrl: "/mockServiceWorker.js",
+    // Extra options merged over the drawer defaults
+    // ({ onUnhandledRequest: "warn", quiet: true }).
+    startOptions: { onUnhandledRequest: "bypass" },
+    // Fail fast instead of letting WKWebView hang the MSW handshake.
+    startTimeoutMs: 4000,
+  }}
+/>
+```
+
+### Recommended: host shell owns the worker
+
+Let the **shell** run `npx msw init public/ --save` and call `worker.start()` once. Each
+micro-frontend then passes `externallyStarted` so the drawer only swaps handlers via
+`worker.use()` and never touches the Service Worker lifecycle:
+
+```tsx
+// shell
+await worker.start({ serviceWorker: { url: "/mockServiceWorker.js" } });
+
+// micro-frontend
+<DebugDrawer worker={worker} workerConfig={{ externallyStarted: true }} />
+```
+
+If instead the micro-frontend serves its own worker under a sub-path, the host server
+must respond with `Service-Worker-Allowed: /` (or a scope narrow enough to cover only the
+paths that micro-frontend calls) — this header cannot be set from JavaScript.
+
+### iOS WebView
+
+No configuration is required. On `WKWebView` the drawer detects that Service Workers are
+unavailable (`window.isSecureContext === false` or a rejected / timed-out `start()`),
+keeps `mockEnabled` off and reports the reason on `useDebugDrawerStore.getState().swError`.
+The WebView renders normally and requests go to the real API. If you need mocked responses
+inside the WebView, mock at the network layer of the native app instead.
+
+| `workerConfig` field | Type            | Default                  | Purpose                                                          |
+| -------------------- | --------------- | ------------------------ | -------------------------------------------------------------- |
+| `serviceWorkerUrl`   | `string`        | `"/mockServiceWorker.js"` | Where the host serves the worker script.                      |
+| `startOptions`       | `MswStartOptions` | —                      | Forwarded to `worker.start()`, merged over the defaults.       |
+| `externallyStarted`  | `boolean`       | `false`                  | Host already called `worker.start()`; only flush handlers.     |
+| `startTimeoutMs`     | `number`        | `4000`                   | Give up on `worker.start()` after this many ms.               |
