@@ -1,4 +1,4 @@
-// @msw-debug/drawer — public API
+// @withgus/debug — public API
 export { DebugDrawer } from "./components/DebugDrawer/DebugDrawer";
 export { useRegisterMockEndpoints } from "./hooks/useRegisterMockEndpoints";
 export { useDebugDrawerStore } from "./store/debugDrawerStore";
