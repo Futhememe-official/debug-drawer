@@ -11,6 +11,7 @@ const NAV = [
   { id: "demo", label: "Live demo" },
   { id: "api", label: "API reference" },
   { id: "theming", label: "Theming" },
+  { id: "microfrontends", label: "Micro-frontends & iOS" },
 ];
 
 const INSTALL = `pnpm add @withgus/debug msw zustand vaul`;
@@ -38,7 +39,7 @@ prepare().then(() => {
 })`;
 
 const APP_SETUP = `// src/App.tsx
-import { DebugDrawer } from '@msw-debug/drawer'
+import { DebugDrawer } from '@withgus/debug'
 import { worker } from './mocks/browser'
 import '@withgus/debug/css' //or inside your global.css file
 
@@ -130,6 +131,25 @@ const THEMING = `/* Override CSS variables to match your design system */
   --mswd-muted:     #6b7280;
   --mswd-font-mono: 'Fira Code', monospace;
 }`;
+
+const WORKER_CONFIG = `<DebugDrawer
+  worker={worker}
+  workerConfig={{
+    // Point at wherever the host actually serves the script.
+    serviceWorkerUrl: '/mockServiceWorker.js',
+    // Extra options merged over the drawer defaults
+    // ({ onUnhandledRequest: 'warn', quiet: true }).
+    startOptions: { onUnhandledRequest: 'bypass' },
+    // Fail fast instead of letting WKWebView hang the MSW handshake.
+    startTimeoutMs: 4000,
+  }}
+/>`;
+
+const SHELL_MFE = `// shell
+await worker.start({ serviceWorker: { url: '/mockServiceWorker.js' } })
+
+// micro-frontend
+<DebugDrawer worker={worker} workerConfig={{ externallyStarted: true }} />`;
 
 export function DocsPage() {
   const [active, setActive] = useState("overview");
@@ -375,6 +395,11 @@ export function DocsPage() {
                 def="true"
                 desc="Set to false to completely hide the drawer."
               />
+              <PropRow
+                name="workerConfig"
+                type="DebugDrawerWorkerConfig"
+                desc="Controls Service Worker start/registration — see Micro-frontends & iOS below."
+              />
             </ApiSection>
 
             <ApiSection
@@ -398,6 +423,11 @@ export function DocsPage() {
                 type="Record<…>"
                 required
                 desc="Handler factories keyed by endpointId → scenarioId."
+              />
+              <PropRow
+                name="config.onApplyChanges"
+                type="(endpoints?: EndpointConfig[]) => void"
+                desc='Called when the user clicks "Apply & reload" on this page.'
               />
             </ApiSection>
 
@@ -431,6 +461,89 @@ export function DocsPage() {
               your design system.
             </p>
             <CodeBlock code={THEMING} filename="src/index.css" />
+          </section>
+
+          <Divider />
+
+          {/* Micro-frontends & iOS WebView */}
+          <section
+            id="microfrontends"
+            className="mb-12 sm:mb-16 scroll-mt-24 md:scroll-mt-8"
+          >
+            <h2 className="text-xl font-bold text-canvas-tx mb-2">
+              Micro-frontends & iOS WebView
+            </h2>
+            <p className="text-canvas-muted text-sm mb-4 leading-relaxed">
+              The MSW Service Worker script must be served by the{" "}
+              <strong>host document</strong> (same origin, ideally at the root
+              so its scope covers <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">/</code>).
+              A micro-frontend bundle cannot drop a file at the host root, and
+              some runtimes — notably <strong>iOS WKWebView</strong> / React
+              Native WebView — block Service Worker registration entirely.
+            </p>
+            <p className="text-canvas-muted text-sm mb-6 leading-relaxed">
+              <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">
+                &lt;DebugDrawer /&gt;
+              </code>{" "}
+              accepts a <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">workerConfig</code>{" "}
+              prop for these cases. If the worker cannot start, the drawer
+              disables mocking, shows "Mock indisponível" and lets the host
+              app keep running against the real API — it never throws.
+            </p>
+            <CodeBlock code={WORKER_CONFIG} />
+
+            <h3 className="text-sm font-semibold text-canvas-tx mb-3 mt-6">
+              Recommended: host shell owns the worker
+            </h3>
+            <p className="text-canvas-muted text-sm mb-4 leading-relaxed">
+              Let the shell run <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">npx msw init public/ --save</code>{" "}
+              and call <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">worker.start()</code> once.
+              Each micro-frontend then passes <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">externallyStarted</code>{" "}
+              so the drawer only swaps handlers via{" "}
+              <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">worker.use()</code> and never touches the
+              Service Worker lifecycle:
+            </p>
+            <CodeBlock code={SHELL_MFE} />
+
+            <h3 className="text-sm font-semibold text-canvas-tx mb-3 mt-6">
+              iOS WebView
+            </h3>
+            <p className="text-canvas-muted text-sm mb-6 leading-relaxed">
+              No configuration is required. On <code className="font-mono text-[11px] bg-canvas-code px-1.5 py-0.5 rounded text-canvas-tx">WKWebView</code>{" "}
+              the drawer detects that Service Workers are unavailable and
+              keeps mocking off instead of crashing the app; requests go to
+              the real API. If you need mocked responses inside the WebView,
+              mock at the network layer of the native app instead.
+            </p>
+
+            <ApiSection
+              title="DebugDrawerWorkerConfig"
+              desc="Fields accepted by the workerConfig prop."
+            >
+              <PropRow
+                name="serviceWorkerUrl"
+                type="string"
+                def='"/mockServiceWorker.js"'
+                desc="Where the host serves the worker script."
+              />
+              <PropRow
+                name="startOptions"
+                type="MswStartOptions"
+                desc="Forwarded to worker.start(), merged over the drawer defaults."
+              />
+              <PropRow
+                name="externallyStarted"
+                type="boolean"
+                def="false"
+                desc="Host already called worker.start(); the drawer only flushes handlers."
+              />
+              <PropRow
+                name="startTimeoutMs"
+                type="number"
+                def="4000"
+                desc="Give up on worker.start() after this many ms."
+              />
+            </ApiSection>
           </section>
         </main>
       </div>

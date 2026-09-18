@@ -68,7 +68,7 @@ prepare().then(() => {
 
 ```tsx
 // src/App.tsx
-import { DebugDrawer } from "@msw-debug/drawer";
+import { DebugDrawer } from "@withgus/debug";
 import { worker } from "./mocks/browser";
 import "@withgus/debug/css"; // or inside your global.css file
 
@@ -175,6 +175,8 @@ export function TeamView() {
 
 > **How it works:** When the component mounts, `useRegisterMockEndpoints` registers the endpoint definitions in the Zustand store and sets this page as current. The drawer automatically flushes the selected scenarios into the MSW worker via `worker.use()`.
 
+Each endpoint row also has its own on/off switch in the drawer (independent from the global mock toggle) — turning it off skips that endpoint on the next apply, so its requests hit the real API while the rest stay mocked. This maps to the `mockEnabled?: boolean` field on `EndpointConfig` (default `true`).
+
 ---
 
 ## 4. API Reference
@@ -185,8 +187,9 @@ The main component. Renders a FAB and a Vaul bottom drawer.
 
 | Prop      | Type          | Required | Description                                                    |
 | --------- | ------------- | -------- | -------------------------------------------------------------- |
-| `worker`  | `SetupWorker` | ✅       | The MSW browser worker instance from `setupWorker()`.          |
-| `enabled` | `boolean`     | —        | Set to `false` to completely hide the drawer. Default: `true`. |
+| `worker`       | `SetupWorker`            | ✅  | The MSW browser worker instance from `setupWorker()`.          |
+| `enabled`      | `boolean`                | —   | Set to `false` to completely hide the drawer. Default: `true`. |
+| `workerConfig` | `DebugDrawerWorkerConfig` | —  | Controls Service Worker start/registration. See [§6](#6-micro-frontends--ios-webview). |
 
 ---
 
@@ -199,6 +202,7 @@ Hook that registers a page's endpoints in the drawer.
 | `config.pageId`    | `string`           | ✅       | Unique page identifier, e.g. `"/team"`.               |
 | `config.endpoints` | `EndpointConfig[]` | ✅       | Endpoint definitions shown in the drawer UI.          |
 | `config.handlers`  | `Record<…>`        | ✅       | Handler factories keyed by `endpointId → scenarioId`. |
+| `config.onApplyChanges` | `(endpoints?: EndpointConfig[]) => void` | —  | Called when the user clicks "Apply & reload" on this page. |
 
 ---
 
