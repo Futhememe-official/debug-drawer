@@ -4,14 +4,14 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "turbo dev",
-    "build": "pnpm --filter debug-drawer build && pnpm --filter docs build",
-    "build:lib": "pnpm --filter debug-drawer build",
+    "build": "pnpm --filter @withgus/debug build && pnpm --filter docs build",
+    "build:lib": "pnpm --filter @withgus/debug build",
     "build:docs": "pnpm --filter docs build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "changeset": "changeset",
     "version-package": "changeset version",
-    "release": "pnpm --filter debug-drawer release"
+    "release": "pnpm --filter @withgus/debug release"
   },
   "devDependencies": {
     "@changesets/cli": "^2.30.0",
